@@ -4,6 +4,7 @@ import {
   Switch
 } from 'react-router-dom';
 import AppHeader from '../common/AppHeader';
+import AppFooter from '../common/AppFooter';
 import Home from '../home/Home';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
@@ -18,6 +19,8 @@ import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import './App.css';
+import {getGroupList} from '../util/APIUtils';
+import Course from '../user//course/Course';
 
 class App extends Component {
   constructor(props) {
@@ -25,7 +28,10 @@ class App extends Component {
     this.state = {
       authenticated: false,
       currentUser: null,
-      loading: false
+      loading: false,
+      userGroups:null,
+      course:null,
+      watchedCourse: false
     }
 
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -36,6 +42,14 @@ class App extends Component {
     this.setState({
       loading: true
     });
+
+
+    getGroupList()
+    .then(response =>{
+      this.setState({
+        userGroups: response
+      });
+    })
 
     getCurrentUser()
     .then(response => {
@@ -49,6 +63,8 @@ class App extends Component {
         loading: false
       });  
     });    
+
+
   }
 
   handleLogout() {
@@ -77,20 +93,28 @@ class App extends Component {
         <div className="app-body">
           <Switch>
             <Route exact path="/" component={Home}></Route>           
-            <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+            <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups}
+            watchedCourse = {this.state.watchedCourse}
               component={Profile}></PrivateRoute>
             <Route path="/login"
               render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/signup"
               render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
+            <Route path ="/course"
+              render={(props) => <Course authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+              watchedCourse={this.state.watchedCourse} course={this.state.course}  {...props} />} ></Route>
             <Route component={NotFound}></Route>
           </Switch>
+        </div>
+        <div className="app-bottom">
+        {/* <AppFooter/> */}
         </div>
         <Alert stack={{limit: 3}} 
           timeout = {3000}
           position='top-right' effect='slide' offset={65} />
       </div>
+
     );
   }
 }

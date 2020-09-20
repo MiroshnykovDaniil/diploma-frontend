@@ -31,6 +31,23 @@ class AppHeader extends Component {
                                         </li>
                                     </ul>
                                 )}
+
+                                {
+                                    this.props.watchedCourse ? (
+                                        <ul>
+                                            <li>
+                                                1111
+                                            </li>                                           
+                                        </ul>
+                                    ):(
+                                        <ul>
+                                            <li>
+                                                <NavLink to="/course">NO</NavLink>
+                                            </li>                                           
+                                        </ul>
+                                    )
+                                }
+
                         </nav>
                     </div>
                 </div>

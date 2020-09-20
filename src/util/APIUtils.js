@@ -49,3 +49,10 @@ export function signup(signupRequest) {
         body: JSON.stringify(signupRequest)
     });
 }
+
+export function getGroupList(){
+    return request({
+        url:API_BASE_URL+"/group/getList",
+        method:'GET'
+    })
+}

@@ -8,6 +8,7 @@ import googleLogo from '../../img/google-logo.png';
 import githubLogo from '../../img/github-logo.png';
 import Alert from 'react-s-alert';
 
+
 class Login extends Component {
     componentDidMount() {
         // If the OAuth2 login encounters an error, the user is redirected to the /login page with an error.
@@ -100,6 +101,7 @@ class LoginForm extends Component {
         }).catch(error => {
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!'+'Error:'+error.message);
         });
+
     }
     
     render() {
