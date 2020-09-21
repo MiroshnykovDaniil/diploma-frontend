@@ -56,3 +56,11 @@ export function getGroupList(){
         method:'GET'
     })
 }
+
+export function getCourseInfo(courseId){
+    return request({
+        url:API_BASE_URL+"/course?id="+courseId,
+        method:'GET'
+        
+    })
+}

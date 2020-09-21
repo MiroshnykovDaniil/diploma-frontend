@@ -21,7 +21,6 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import './App.css';
 import {getGroupList} from '../util/APIUtils';
 import Course from '../user//course/Course';
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +30,8 @@ class App extends Component {
       loading: false,
       userGroups:null,
       course:null,
-      watchedCourse: false
+      watchedCourse: false,
+      courseId:null
     }
 
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -62,10 +62,16 @@ class App extends Component {
       this.setState({
         loading: false
       });  
-    });    
-
+    }); 
+    
 
   }
+
+
+
+  
+
+
 
   handleLogout() {
     localStorage.removeItem(ACCESS_TOKEN);
