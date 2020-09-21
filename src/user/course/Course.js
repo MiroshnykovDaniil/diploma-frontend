@@ -18,10 +18,10 @@ class Course extends Component{
             <div className="course-container">
                 <div className="container">
                     <div className="course-title">
-                        <h2>{this.props.location.state.watchCourse.title}</h2>
+                        <h2>{this.props.course.title}</h2>
                     </div>
                     <div className="course-desc">
-                        <h2>{this.props.location.state.watchCourse.description}</h2>
+                        <h2>{this.props.course.description}</h2>
                     </div>
                 </div>
             </div>

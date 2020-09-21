@@ -11,10 +11,6 @@ class Profile extends Component {
         console.log(props);
     }
 
-    watchCourse(){
-        this.props.watchedCourse=true;
-    }
-
 
     GroupList(props){
         const list = props.userGroups;
@@ -29,7 +25,9 @@ class Profile extends Component {
                         <div key = {course.id}>
                             <ul>
                                 <li>
-                                        <NavLink to={{pathname:"/course",state:{watchCourse:course}}}>{course.title}</NavLink>
+                                        <NavLink to={{pathname:"/course"}} onClick={()=>
+                                        props.userGroups.handleSetCourse(course)
+                                        }>{course.title}</NavLink>
                                 </li>
                             </ul>
                             <p>{course.description}</p>

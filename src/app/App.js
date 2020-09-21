@@ -80,6 +80,13 @@ class App extends Component {
     this.loadCurrentlyLoggedInUser();
   }
 
+  setCourse(course){
+    this.setState({
+      course:course,
+      watchedCourse:true
+    });
+  }
+
   render() {
     if(this.state.loading) {
       return <LoadingIndicator />
@@ -88,13 +95,13 @@ class App extends Component {
     return (
       <div className="app">
         <div className="app-top-box">
-          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} />
+          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} watchedCourse={this.state.watchedCourse} />
         </div>
         <div className="app-body">
           <Switch>
             <Route exact path="/" component={Home}></Route>           
             <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups}
-            watchedCourse = {this.state.watchedCourse}
+            watchedCourse = {this.state.watchedCourse} course={this.state.course} handleSetCourse={this.setCourse.bind(this)}
               component={Profile}></PrivateRoute>
             <Route path="/login"
               render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>

@@ -3,7 +3,56 @@ import { Link, NavLink } from 'react-router-dom';
 import './AppHeader.css';
 
 class AppHeader extends Component {
+
+    constructor(props) {
+        super(props);
+        console.log(props);
+    }
+
+
     render() {
+        let button;
+        if(this.props.authenticated && this.props.watchedCourse){
+            button = (
+                <ul>
+                    <li>
+                        <NavLink to="/course">Back to course</NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/profile">Profile</NavLink>
+                    </li>
+                    <li>
+                        <a onClick={this.props.onLogout}>Logout</a>
+                    </li>
+                </ul>
+            );
+
+        }
+        else if (this.props.authenticated){
+            button = (
+                <ul>
+                    <li>
+                        <NavLink to="/profile">Profile</NavLink>
+                    </li>
+                    <li>
+                        <a onClick={this.props.onLogout}>Logout</a>
+                    </li>
+            </ul>
+            );
+        }
+        else{
+            button = (
+                <ul>
+                    <li>
+                        <NavLink to="/login">Login</NavLink>        
+                    </li>
+                    <li>
+                        <NavLink to="/signup">Signup</NavLink>        
+                    </li>
+                </ul>
+            )
+        };
+
         return (
             <header className="app-header">
                 <div className="container">
@@ -12,42 +61,7 @@ class AppHeader extends Component {
                     </div>
                     <div className="app-options">
                         <nav className="app-nav">
-                                { this.props.authenticated ? (
-                                    <ul>
-                                        <li>
-                                            <NavLink to="/profile">Profile</NavLink>
-                                        </li>
-                                        <li>
-                                            <a onClick={this.props.onLogout}>Logout</a>
-                                        </li>
-                                    </ul>
-                                ): (
-                                    <ul>
-                                        <li>
-                                            <NavLink to="/login">Login</NavLink>        
-                                        </li>
-                                        <li>
-                                            <NavLink to="/signup">Signup</NavLink>        
-                                        </li>
-                                    </ul>
-                                )}
-
-                                {
-                                    this.props.watchedCourse ? (
-                                        <ul>
-                                            <li>
-                                                1111
-                                            </li>                                           
-                                        </ul>
-                                    ):(
-                                        <ul>
-                                            <li>
-                                                <NavLink to="/course">NO</NavLink>
-                                            </li>                                           
-                                        </ul>
-                                    )
-                                }
-
+                                {button}                                
                         </nav>
                     </div>
                 </div>
