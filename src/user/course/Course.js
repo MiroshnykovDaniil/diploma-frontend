@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom'
+import { Link, NavLink, Redirect } from 'react-router-dom'
 import {getCourseInfo} from '../../util/APIUtils';
 
 
@@ -31,6 +31,20 @@ class Course extends Component{
         if(this.state.course==null) 
             return null;
 
+        let lessonList;
+        if (this.state.course.lessons.length >0){
+            lessonList=this.state.course.lessons.map((lesson) =>
+            <div key = {lesson.id}>
+                    <NavLink to={{pathname:"/lesson"}}
+                    onClick={()=>
+                        this.props.handleSetLesson(lesson)
+                    }>{lesson.title}</NavLink> 
+
+                <p>{lesson.description}</p>
+            </div>
+            );
+        }
+
         return(
             <div className="course-container">
                 <div className="container">
@@ -40,6 +54,8 @@ class Course extends Component{
                     <div className="course-desc">
                         <h2>{this.state.course.description}</h2>
                     </div>
+                    <div className="lesson-list"></div>
+                    {lessonList}
                 </div>
             </div>
         );

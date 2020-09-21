@@ -21,6 +21,7 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import './App.css';
 import {getGroupList} from '../util/APIUtils';
 import Course from '../user//course/Course';
+import Lesson from '../user/lesson/Lesson';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +32,9 @@ class App extends Component {
       userGroups:null,
       course:null,
       watchedCourse: false,
-      courseId:null
+      courseId:null,
+      lesson:null,
+      watchedLesson:false
     }
 
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -69,9 +72,6 @@ class App extends Component {
 
 
 
-  
-
-
 
   handleLogout() {
     localStorage.removeItem(ACCESS_TOKEN);
@@ -90,6 +90,13 @@ class App extends Component {
     this.setState({
       course:course,
       watchedCourse:true
+    });
+  }
+
+  setLesson(lesson){
+    this.setState({
+      lesson:lesson,
+      watchedLesson:true
     });
   }
 
@@ -116,7 +123,12 @@ class App extends Component {
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
             <Route path ="/course"
               render={(props) => <Course authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-              watchedCourse={this.state.watchedCourse} course={this.state.course}  {...props} />} ></Route>
+              watchedCourse={this.state.watchedCourse} course={this.state.course} handleSetLesson={this.setLesson.bind(this)}  {...props} />} ></Route>
+             <Route path ="/lesson"
+              render={(props) => <Lesson authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+              watchedCourse={this.state.watchedCourse} course={this.state.course} lesson={this.state.lesson}  {...props} />} ></Route>
+
+
             <Route component={NotFound}></Route>
           </Switch>
         </div>

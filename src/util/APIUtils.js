@@ -64,3 +64,9 @@ export function getCourseInfo(courseId){
         
     })
 }
+
+export function getLessonById(lessonId){
+    return request({
+        url:API_BASE_URL+"/course/lesson?id="+lessonId,
+        method:'GET'
+    })}
