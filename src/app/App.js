@@ -9,6 +9,7 @@ import Home from '../home/Home';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
+import Teacher from '../user/teacher/Teacher';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
@@ -34,6 +35,7 @@ class App extends Component {
       watchedCourse: false,
       courseId:null,
       lesson:null,
+      teacher:false,
       watchedLesson:false
     }
 
@@ -59,8 +61,12 @@ class App extends Component {
       this.setState({
         currentUser: response,
         authenticated: true,
-        loading: false
+        loading: false,
       });
+      if (this.state.currentUser.roles.indexOf("TEACHER")!=-1)
+      this.setState(
+        {teacher:true}
+        );
     }).catch(error => {
       this.setState({
         loading: false
@@ -108,7 +114,7 @@ class App extends Component {
     return (
       <div className="app">
         <div className="app-top-box">
-          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} watchedCourse={this.state.watchedCourse} />
+          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} teacher={this.state.teacher} watchedCourse={this.state.watchedCourse} />
         </div>
         <div className="app-body">
           <Switch>
@@ -116,6 +122,8 @@ class App extends Component {
             <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups}
             watchedCourse = {this.state.watchedCourse} course={this.state.course} handleSetCourse={this.setCourse.bind(this)}
               component={Profile}></PrivateRoute>
+              <Route path="/teacher"
+              render={(props) => <Teacher authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups} />} ></Route>
             <Route path="/login"
               render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/signup"

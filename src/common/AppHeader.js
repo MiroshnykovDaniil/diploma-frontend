@@ -28,6 +28,22 @@ class AppHeader extends Component {
             );
 
         }
+        else if (this.props.authenticated&&this.props.teacher){
+            button = (
+                <ul>
+                    <li>
+                        <NavLink to="/teacher">Teacher</NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/profile">Profile</NavLink>
+                    </li>
+                    <li>
+                        <a onClick={this.props.onLogout}>Logout</a>
+                    </li>
+                </ul>
+            );
+        }
+
         else if (this.props.authenticated){
             button = (
                 <ul>

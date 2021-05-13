@@ -1,4 +1,7 @@
 
+
+//export const API_BASE_URL = 'http://195.54.163.131:8080/DiplomaApplication';
+
 export const API_BASE_URL = 'http://localhost:8080';
 export const ACCESS_TOKEN = 'accessToken';
 

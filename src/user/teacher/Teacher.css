@@ -1,0 +1,25 @@
+.teacher-container{
+    padding-top: 30px;
+}
+
+.group-container{
+    padding-top: 2%;
+
+}
+.groupList tr td{
+    width:200;
+}
+
+.groupList{
+    padding-left: 2%;
+    display: inline-block;
+    text-align: center;
+
+}
+
+.groupInfo{
+    padding-right: 5%;
+    text-align: left;
+    float:right;
+
+}
