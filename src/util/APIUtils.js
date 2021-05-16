@@ -70,3 +70,10 @@ export function getLessonById(lessonId){
         url:API_BASE_URL+"/course/lesson?id="+lessonId,
         method:'GET'
     })}
+
+export function getAllUsers(){
+        return request({
+            url:API_BASE_URL+"/users/all",
+            method:'GET'
+        })
+}

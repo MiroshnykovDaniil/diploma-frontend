@@ -23,3 +23,14 @@
     float:right;
 
 }
+
+
+.teacher-container .profile-avatar img {
+    right: 200px;
+    border-radius: 50%;
+    max-width: 50px;
+}
+.teacher-container .text-avatar {
+    width: 50px;
+    height: 50px;
+}
