@@ -20,7 +20,7 @@
     font-weight: 400;
 }
 
-.text-avatar {
+.profile-info .text-avatar {
     width: 200px;
     height: 200px;
     margin: 0 auto;
@@ -36,7 +36,7 @@
     background-image: linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
 }
 
-.text-avatar span {
+.profile-info .text-avatar span {
     line-height: 200px;
     color: #fff;
     font-size: 3em;

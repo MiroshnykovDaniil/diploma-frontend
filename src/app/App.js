@@ -127,7 +127,7 @@ class App extends Component {
             watchedCourse = {this.state.watchedCourse} course={this.state.course} handleSetCourse={this.setCourse.bind(this)}
               component={Profile}></PrivateRoute>
               <Route path="/teacher"
-              render={(props) => <Teacher authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups} />} ></Route>
+              render={(props) => <Teacher loadCurrentlyLoggedInUser={this.loadCurrentlyLoggedInUser} authenticated={this.state.authenticated} currentUser={this.state.currentUser} userGroups={this.state.userGroups} />} ></Route>
             <Route path="/login"
               render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/signup"

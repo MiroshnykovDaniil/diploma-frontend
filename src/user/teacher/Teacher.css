@@ -1,5 +1,5 @@
 .teacher-container{
-    padding-top: 30px;
+    padding-top: 0%;
 }
 
 .group-container{
@@ -14,7 +14,6 @@
     padding-left: 2%;
     display: inline-block;
     text-align: center;
-
 }
 
 .groupInfo{
@@ -24,13 +23,42 @@
 
 }
 
+.group-container .profile-avatar{
+    width: 10%;
+    height: 10%;
+    border-radius: 10%;
 
-.teacher-container .profile-avatar img {
-    right: 200px;
-    border-radius: 50%;
-    max-width: 50px;
 }
-.teacher-container .text-avatar {
+.group-container .text-avatar {
     width: 50px;
     height: 50px;
+    margin: 0 auto;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 50%;
+    background: #46b5e5;
+    background: linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+    background-image: -ms-linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+    background-image: -moz-linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+    background-image: -o-linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+    background-image: -webkit-linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+    background-image: linear-gradient(45deg,#46b5e5 1%,#1e88e5 64%,#40baf5 97%);
+}
+
+.group-container .text-avatar span {
+    line-height: 50px;
+    color: #fff;
+    font-size: 3em;
+}
+
+.admin-col{
+    color: crimson;
+}
+
+.teacher-col{
+    color: #1e88e5;
+}
+
+.user-col{
+    color: forestgreen;
 }
