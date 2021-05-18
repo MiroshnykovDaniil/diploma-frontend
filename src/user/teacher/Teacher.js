@@ -19,7 +19,14 @@ import ButtonBoot from 'react-bootstrap/Button'
 import Accordion from 'react-bootstrap/Accordion'
 
 import SearchForm from '../../components/AddUserToGroup';
+import AddInfoForm from '../../components/AddInfoToLesson';
+
 import { deleteUsersFromGroup, getAuthorCourses, getPdf } from '../../util/APIUtils';
+
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
+
+import ReactPlayer from 'react-player'
+
 
 class Teacher extends Component{
     constructor(props) {
@@ -32,8 +39,11 @@ class Teacher extends Component{
             reload:false,
 
             courses:null,
-            pdf:null
+            pdf:null,
+            youTube:null,
 
+            addInfo:false,
+            addToLesson:null,
         }
         this.GroupList=this.GroupList.bind(this);
         this.CoursesList=this.CoursesList.bind(this);
@@ -45,18 +55,29 @@ class Teacher extends Component{
         this.getAuthorCourses = this.getAuthorCourses.bind(this);
         this.lessonDataList = this.lessonDataList.bind(this);
         this.watchPdf = this.watchPdf.bind(this);
+        this.watchLessonData = this.watchLessonData.bind(this);
+        this.watchYouTubeVideo = this.watchYouTubeVideo.bind(this);
+        this.ifPdf = this.ifPdf.bind(this);
 
+        this.addCourseData=this.addCourseData.bind(this);
+        this.endAddCourseData=this.endAddCourseData.bind(this);
 
     } 
-  //  openModal = (id) => this.setState({ openModel: true,addToGroupId:id }); 
     
     openModal(group){
         this.setState({openModel:true,addToGroup:group})
     }
     closeModal(){
         this.setState({openModel:false},()=>{this.updateUserState()})
-        
     }
+
+    addCourseData(lesson){
+        this.setState({addInfo:true,addToLesson:lesson})
+    }
+    endAddCourseData(){
+        this.setState({addInfo:false},()=>{this.getAuthorCourses()})
+    }
+
     
     UserRoles(group,member){
         const list=[];
@@ -333,6 +354,8 @@ class Teacher extends Component{
             )
     }
 
+
+
     watchPdf(){
         if (this.state.pdf === null)return;
         // let file = this._arrayBufferToBase64(this.state.pdf);
@@ -340,6 +363,23 @@ class Teacher extends Component{
         if(file===null) return;
         const blobURL = URL.createObjectURL(file);
         window.open(blobURL)
+    //   const [numPages, setNumPages] = React.useState(null);
+    //   const [pageNumber, setPageNumber] = React.useState(1);
+    //   function onDocumentLoadSuccess({ numPages }) {
+    //     setNumPages(numPages);
+    //   }
+        
+
+    //     return(
+    //         <div>
+    //         <Document file={this.state.pdf} onLoadSuccess={({ numPages })=>setNumPages(numPages)}>
+    //             {Array.apply(null, Array(numPages))
+    //         .map((x, i)=>i+1)
+    //         .map(page => <Page pageNumber={page}/>)}
+
+    //         </Document>
+    //         </div>
+    //     )
     }
 
     _arrayBufferToBase64( buffer ) {
@@ -349,27 +389,46 @@ class Teacher extends Component{
         for (var i = 0; i < len; i++) {
             binary += String.fromCharCode( bytes[ i ] );
         }
-        return window.btoa( binary );
+
+
+        // return window.btoa( binary );
     }
     
+    watchYouTubeVideo(data){
+        if(data.data===undefined){return(<div></div>)}
+        else return(
+            <Row>
+                <ReactPlayer url={data.data} />
+            </Row>
+        )
+    }
 
     watchLessonData(data){
-        switch(data.dataType){
+            switch(data.dataType){
             case "PDF":{
+                let blob
                 getPdf(data.id)
-                .then(response =>{
-                  this.setState({
-                    pdf: response
-                  },()=>{this.watchPdf()});
+                .then( (response) =>{
+                    this.setState({
+                        pdf:response
+                    },()=>{this.watchPdf()})
                 })
-            
-                break;
             }
-            case "Video":{
-
+            case "video":{
+                if(data.youtubeLink!=null){
+                    this.setState({youtubeLink:data.youtubeLink})
+                }
             }
         }
+        return
 
+    }
+
+    ifPdf(data){
+        if(data.dataType==="PDF") return(
+            <ButtonBoot onClick={()=>this.watchLessonData(data)}>Переглянути</ButtonBoot>
+        )
+        else return(<div></div>)
     }
 
     lessonDataList(lesson){
@@ -380,7 +439,7 @@ class Teacher extends Component{
                 <Card>
                     <Card.Header>
                         <div className="text-avatar">
-                            {data.datatype}
+                            {data.dataType}
                         </div>
                     </Card.Header>
                 <Card.Body>
@@ -388,12 +447,10 @@ class Teacher extends Component{
                     <Card.Text>
                         <Row>{data.description}</Row>
                         <Row>
-                            <Col>
-                                <ButtonBoot onClick={()=>this.watchLessonData(data)}>Переглянути</ButtonBoot>
-                            </Col>
-                            <Col>
-                                <ButtonBoot>Видалити</ButtonBoot>
-                            </Col>
+                            <this.watchYouTubeVideo data={data.youtubeLink}/>
+                            <this.ifPdf dataType={data.dataType} id={data.id}/>
+                            <Row><div></div></Row>
+                            <ButtonBoot>Видалити</ButtonBoot>
                         </Row>
                     </Card.Text>
                 </Card.Body>
@@ -408,6 +465,7 @@ class Teacher extends Component{
             </ListGroup>
         )
     }
+
 
     lessonList(course){
         if (typeof course == 'undefined')return;
@@ -430,8 +488,21 @@ class Teacher extends Component{
                             {this.lessonDataList(lesson)}
                             </Row>
                             <Row>
-                                <ButtonBoot>Додати</ButtonBoot>
+                                <ButtonBoot onClick={()=>this.addCourseData(lesson)}>ДОДАТИ МАТЕРІАЛ</ButtonBoot>
                             </Row>
+                            <Row>
+                                { this.state.addInfo ? 
+                                <AddInfoForm updateUserState = {this.updateUserState}
+                                closeModal={this.endAddCourseData} 
+                                isOpen={this.state.addInfo} 
+                                lesson={this.state.addToLesson}
+                                /> 
+                                : 
+                                null 
+                                }
+
+                            </Row>
+
                         </Card.Body>
                     </Accordion.Collapse>
                 </Card>

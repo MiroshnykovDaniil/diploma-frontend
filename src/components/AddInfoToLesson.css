@@ -1,0 +1,17 @@
+.list-group .name{
+    width: 35%;
+}
+.list-group .email{
+    width: 35%;
+}
+.list-group .roles{
+    width: 20%;
+}
+.list-group .my-btn{
+    width: 10%;
+}
+
+.addInfo-modal {
+    width: 90vw;
+    max-width: 90vw;
+} 

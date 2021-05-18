@@ -145,3 +145,12 @@ export function getPdf(id){
         method:'GET'
     })
 }
+
+export function addPdf(id,title, desc, file){
+
+    return request({
+        url: API_BASE_URL + "/course/lesson/pdf/?id="+id+"&title="+title+"&description="+desc,
+        method: 'POST',
+        body: file
+    } )
+}
