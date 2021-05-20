@@ -10,48 +10,6 @@ class Profile extends Component {
         super(props);
         console.log(props);
     }
-
-
-    GroupList(props){
-        const list = props.userGroups;
-
-        const groupList = list.userGroups.map((group) =>
-            <div key={group.id}>
-                <h3>{group.title}</h3>
-                <li>Count of members: {group.members.length}</li>
-                <div>
-                    <h3>Assigned courses</h3>
-                    {group.assignedCourses.map((course) =>
-                        <div key = {course.id}>
-                            <ul>
-                                <li>
-                                        <NavLink to={{pathname:"/course"}} onClick={()=>
-                                        props.userGroups.handleSetCourse(course)
-                                        }>{course.title}</NavLink>
-                                </li>
-                            </ul>
-                            <p>{course.description}</p>
-                        </div>
-                    )}
-                </div>
-
-
-                <div>
-                </div>
-            </div>
-        );
-
-
-    
-        return(
-            <div>
-                {groupList}
-            </div>
-        );
-
-    }
-
-
     render() {
         return (
             <div className="profile-container">
@@ -72,9 +30,6 @@ class Profile extends Component {
                            <h2>{this.props.currentUser.name}</h2>
                            <p className="profile-email">{this.props.currentUser.email}</p>
                         </div>
-                    </div>
-                    <div className="groups-info"> 
-                        <this.GroupList userGroups = {this.props}/>
                     </div>
                 </div>    
             </div>

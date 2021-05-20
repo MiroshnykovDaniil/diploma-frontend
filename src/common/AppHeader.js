@@ -12,46 +12,48 @@ class AppHeader extends Component {
 
     render() {
         let button;
-        if(this.props.authenticated && this.props.watchedCourse){
+        // if(this.props.authenticated && this.props.watchedCourse){
+        //     button = (
+        //         <ul>
+        //             <li>
+        //                 <NavLink to="/course">Back to course</NavLink>
+        //             </li>
+        //             <li>
+        //                 <NavLink to="/profile">Profile</NavLink>
+        //             </li>
+        //             <li>
+        //                 <a onClick={this.props.onLogout}>Logout</a>
+        //             </li>
+        //         </ul>
+        //     );
+
+        // }
+        if (this.props.authenticated&&this.props.teacher){
             button = (
                 <ul>
                     <li>
-                        <NavLink to="/course">Back to course</NavLink>
+                        <NavLink to="/teacher">Панель вчителя</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/profile">Profile</NavLink>
+                        <NavLink to="/profile">Профіль</NavLink>
                     </li>
                     <li>
-                        <a onClick={this.props.onLogout}>Logout</a>
-                    </li>
-                </ul>
-            );
-
-        }
-        else if (this.props.authenticated&&this.props.teacher){
-            button = (
-                <ul>
-                    <li>
-                        <NavLink to="/teacher">Teacher</NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/profile">Profile</NavLink>
-                    </li>
-                    <li>
-                        <a onClick={this.props.onLogout}>Logout</a>
+                        <a onClick={this.props.onLogout}>Вийти з системи</a>
                     </li>
                 </ul>
             );
         }
-
         else if (this.props.authenticated){
             button = (
                 <ul>
                     <li>
-                        <NavLink to="/profile">Profile</NavLink>
+                        <NavLink to="/courses">Навчальні курси</NavLink>
                     </li>
                     <li>
-                        <a onClick={this.props.onLogout}>Logout</a>
+                        <NavLink to="/profile">Профіль</NavLink>
+                    </li>
+                    <li>
+                        <a onClick={this.props.onLogout}>Вийти з системи</a>
                     </li>
             </ul>
             );
@@ -60,10 +62,10 @@ class AppHeader extends Component {
             button = (
                 <ul>
                     <li>
-                        <NavLink to="/login">Login</NavLink>        
+                        <NavLink to="/login">Увійти в систему</NavLink>        
                     </li>
                     <li>
-                        <NavLink to="/signup">Signup</NavLink>        
+                        <NavLink to="/signup">Зареєструватись</NavLink>        
                     </li>
                 </ul>
             )
@@ -73,7 +75,7 @@ class AppHeader extends Component {
             <header className="app-header">
                 <div className="container">
                     <div className="app-branding">
-                        <Link to="/" className="app-title">Kids knowledge</Link>
+                        <Link to="/" className="app-title">Система навчання</Link>
                     </div>
                     <div className="app-options">
                         <nav className="app-nav">

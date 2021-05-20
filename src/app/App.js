@@ -133,9 +133,9 @@ class App extends Component {
             <Route path="/signup"
               render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
-            <Route path ="/course"
+            <Route path ="/courses"
               render={(props) => <Course authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-              watchedCourse={this.state.watchedCourse} course={this.state.course} handleSetLesson={this.setLesson.bind(this)}  {...props} />} ></Route>
+              userGroups={this.state.userGroups}  {...props} />} ></Route>
              <Route path ="/lesson"
               render={(props) => <Lesson authenticated={this.state.authenticated} currentUser={this.state.currentUser}
               watchedCourse={this.state.watchedCourse} course={this.state.course} lesson={this.state.lesson}  {...props} />} ></Route>

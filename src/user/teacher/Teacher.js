@@ -20,8 +20,14 @@ import Accordion from 'react-bootstrap/Accordion'
 
 import SearchForm from '../../components/AddUserToGroup';
 import AddInfoForm from '../../components/AddInfoToLesson';
+import AddLesson from '../../components/AddLesson';
+import AddCourse from '../../components/AddCourse';
+import AddCourseToGroup from '../../components/AddCourseToGroup';
+import AddGroup from '../../components/AddGroup';
 
-import { deleteUsersFromGroup, getAuthorCourses, getPdf } from '../../util/APIUtils';
+
+
+import { deleteUsersFromGroup, getAuthorCourses, getPdf, getVideo, deleteGroup } from '../../util/APIUtils';
 
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
@@ -42,8 +48,19 @@ class Teacher extends Component{
             pdf:null,
             youTube:null,
 
+            video:null,
+
             addInfo:false,
             addToLesson:null,
+
+            addLesson:null,
+            addToCourse:null,
+
+            addCourse:null,
+
+            openCourseModel:null,
+            addGroup:null
+
         }
         this.GroupList=this.GroupList.bind(this);
         this.CoursesList=this.CoursesList.bind(this);
@@ -58,10 +75,28 @@ class Teacher extends Component{
         this.watchLessonData = this.watchLessonData.bind(this);
         this.watchYouTubeVideo = this.watchYouTubeVideo.bind(this);
         this.ifPdf = this.ifPdf.bind(this);
+        this.ifVideo = this.ifVideo.bind(this);
+    
+        this.watchVideo = this.watchVideo.bind(this);
 
+        
+        
         this.addCourseData=this.addCourseData.bind(this);
         this.endAddCourseData=this.endAddCourseData.bind(this);
 
+        this.addLesson=this.addLesson.bind(this);
+        this.endAddLesson=this.endAddLesson.bind(this);
+
+        this.addCourse=this.addCourse.bind(this);
+        this.endAddCourse=this.endAddCourse.bind(this);
+
+        this.closeCourseModal=this.closeCourseModal.bind(this);
+        this.openCourseModal=this.openCourseModal.bind(this);
+
+        this.addGroup=this.addGroup.bind(this);
+        this.endAddGroup=this.endAddGroup.bind(this);
+
+        this.deleteGroup=this.deleteGroup.bind(this);
     } 
     
     openModal(group){
@@ -71,6 +106,13 @@ class Teacher extends Component{
         this.setState({openModel:false},()=>{this.updateUserState()})
     }
 
+    openCourseModal(group){
+        this.setState({openCourseModel:true,addToGroup:group})
+    }
+    closeCourseModal(){
+        this.setState({openCourseModel:false},()=>{this.updateUserState()})
+    }
+
     addCourseData(lesson){
         this.setState({addInfo:true,addToLesson:lesson})
     }
@@ -78,12 +120,33 @@ class Teacher extends Component{
         this.setState({addInfo:false},()=>{this.getAuthorCourses()})
     }
 
+    addLesson(course){
+        this.setState({addLesson:true,addToCourse:course})
+    }
+    endAddLesson(){
+        this.setState({addLesson:false},()=>{this.getAuthorCourses()})
+    }
+
+    addCourse(){
+        this.setState({addCourse:true})
+    }
+    endAddCourse(){
+        this.setState({addCourse:false},()=>{this.getAuthorCourses()})
+    }
+
+    addGroup(){
+        this.setState({addGroup:true})
+    }
+    endAddGroup(){
+        this.setState({addGroup:false},()=>{this.getAuthorCourses()})
+    }
+
     
     UserRoles(group,member){
         const list=[];
         list.push(
             <Col>
-                <strong>РОЛІ:</strong>
+                <Card.Text>РОЛІ:</Card.Text>
             </Col>)
         for(let roles of member.roles){
             switch(roles){
@@ -108,7 +171,7 @@ class Teacher extends Component{
         }
         if (!member.roles.includes("ADMIN")&&!member.roles.includes("TEACHER"))
             list.push(
-                <Row><ButtonBoot variant="danger" onClick={()=>this.deleteMemeberFromGroup(group.id,member)}>ВИДАЛИТИ</ButtonBoot></Row>
+                <Row><ButtonBoot variant="outline-danger" onClick={()=>this.deleteMemeberFromGroup(group.id,member)}>ВИДАЛИТИ УДАСНИКА З ГРУПИ</ButtonBoot></Row>
             );
 
         return(
@@ -128,48 +191,75 @@ class Teacher extends Component{
         return (this.props.loadCurrentlyLoggedInUser())
     }
 
+
+    CourseList(group){
+        if (typeof group == 'undefined')return;
+        const list = [];
+
+        for(let course of group.assignedCourses){
+            list.push(
+                <Accordion>
+                    <Card>
+                    <Card.Header>
+                    <Accordion.Toggle as={ButtonBoot} variant="link" eventKey={course.title}>
+                                {course.title}
+                    </Accordion.Toggle>
+                    </Card.Header>
+
+                    <Accordion.Collapse eventKey={course.title}>
+                    <Card.Body>
+                        <Card.Text>Курс створив: {course.creator.name}</Card.Text>
+                        <Card.Text>{course.description}</Card.Text>
+                    </Card.Body>
+
+
+                    </Accordion.Collapse>
+
+                </Card>
+
+                </Accordion>
+
+
+                // <Card>
+                //     <Card.Header>
+                //     <Row>Курс створив: {course.creator.name}</Row>
+                //     </Card.Header>
+                //     <Card.Body>
+                //         <Card.Title>{course.title}</Card.Title>
+                //         <Card.Text>{course.description}</Card.Text>
+                //     </Card.Body>
+                // </Card>
+            )
+        }
+        return(
+            <ListGroup>
+                {list}
+            </ListGroup>
+        );
+    }
+
     UserList(group){
         if (typeof group == 'undefined')return;
         const list = [];
 
         for(let member of group.members){
             list.push(
+                <Accordion>
                 <Card>
                     <Card.Header>
-                    <div className="profile-avatar">
-                            { 
-                                member.imageUrl ? (
-                                    <Card.Img src={member.imageUrl} alt={member.name}/>
-                                ) : (
-                                    <div className="text-avatar">
-                                        {member.name && member.name[0]}
-                                    </div>
-                                )
-                            }
-                        </div>
-                    </Card.Header>
-                    <Card.Body>
+                    <Accordion.Toggle as={ButtonBoot} variant="link" eventKey={member.id}>
                         <Card.Title>{member.name}</Card.Title>
+                    </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey={member.id}>
+                    <Card.Body>
+                        <Card.Text>Електрона адреса: {member.email}</Card.Text>
                         <Card.Text>{this.UserRoles(group,member)}</Card.Text>
                     </Card.Body>
+                    </Accordion.Collapse>
                 </Card>
-                // <ListGroup.Item>
-                //     <Row>
-                //     <div className="profile-avatar">
-                //             { 
-                //                 member.imageUrl ? (
-                //                     <img src={member.imageUrl} alt={member.name}/>
-                //                 ) : (
-                //                     <div className="text-avatar">
-                //                         {member.name && member.name[0]}
-                //                     </div>
-                //                 )
-                //             }
-                //         </div>
-                //     </Row>
-                //     <Row>{member.name}</Row>
-                //     <Row>{this.UserRoles(group,member)}</Row>
-                // </ListGroup.Item>
+                </Accordion>
+
             )
         }
         return(
@@ -197,6 +287,9 @@ class Teacher extends Component{
                </div>
            )
        }
+       list2.push(
+            <ButtonBoot variant="outline-primary" onClick={()=>this.addGroup()}>СТВОРИТИ ГРУПУ</ButtonBoot>
+       )
 
        const groupInfo =[]
        for(let data of list.userGroups){
@@ -204,17 +297,11 @@ class Teacher extends Component{
                 <Tab.Pane
                 eventKey={"#group="+data.id}
                 >
-                    <Row>
-                        <Col>Название</Col>
-                    </Row>
-                    <Row>
-                        <Col>{data.title}</Col>
-                    </Row>
                     <Accordion>
                         <Card className="group-memebrs">
                             <Card.Header>
                                 <Accordion.Toggle as={ButtonBoot} variant="link" eventKey="0">
-                                    Учасники групы
+                                    Учасники групи
                                 </Accordion.Toggle>
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
@@ -223,15 +310,33 @@ class Teacher extends Component{
                                         {this.UserList(data)}
                                     </Row>
                                     <Row>
-                                        <ButtonBoot onClick={()=>this.openModal(data)}>ДОДАТИ ДО ГРУПИ</ButtonBoot>
+                                        <ButtonBoot variant="outline-primary" onClick={()=>this.openModal(data)}>ДОДАТИ КОРИСТУВАЧА ДО ГРУПИ</ButtonBoot>
                                     </Row>
                                 </Card.Body>
                             </Accordion.Collapse>
                         </Card>
+
+                        <Card className="group-courses">
+                            <Card.Header>
+                                <Accordion.Toggle as={ButtonBoot} variant="link" eventKey="1">
+                                    Курси групи
+                                </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="1">
+                                <Card.Body>
+                                    <Row>
+                                        {this.CourseList(data)}
+                                    </Row>
+                                    <Row>
+                                        <ButtonBoot variant="outline-primary" onClick={()=>this.openCourseModal(data)}>ДОДАТИ КУРС ДО ГРУПИ</ButtonBoot>
+                                    </Row>
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                        <Row>
+                        <ButtonBoot variant="outline-danger" onClick={()=>this.deleteGroup(data)}>ВИДАЛИТИ ГРУПУ</ButtonBoot>
+                        </Row>
                     </Accordion>
-                    {/* <Row>
-                        <ButtonBoot onClick={()=>this.openModal(data)}></ButtonBoot>
-                    </Row> */}
                 </Tab.Pane>
         )
     }
@@ -242,17 +347,27 @@ class Teacher extends Component{
                     <Col sm={1}></Col>
                     <Col sm={3}>
                         <ListGroup>
-                            <strong>Название группы</strong>
+                            <strong>Назва групи</strong>
                             {list2}
                         </ListGroup>
                     </Col>
                     <Col sm={7}>
                         <Tab.Content>     
-                                <strong>Поднобности</strong>
+                                <strong>Інформація про групу</strong>
                                 {groupInfo}
                         </Tab.Content>
                     </Col>
                     <Col sm={1}></Col>
+                </Row>
+                <Row>
+                { this.state.addGroup ? 
+                                <AddGroup updateUserState = {this.updateUserState}
+                                closeModal={this.endAddGroup} 
+                                isOpen={this.state.addGroup} 
+                                /> 
+                                : 
+                                null 
+                                }
                 </Row>
                 <Row>
                     { this.state.openModel ? 
@@ -267,8 +382,29 @@ class Teacher extends Component{
                     }
 
                 </Row>
+
+                <Row>
+                    { this.state.openCourseModel ? 
+                    <AddCourseToGroup updateUserState = {this.updateUserState}
+                    closeModal={this.closeCourseModal} 
+                    isOpen={this.state.openCourseModel} 
+                    handleSubmit={this.handleSubmit}
+                    group={this.state.addToGroup}
+                    /> 
+                    : 
+                    null 
+                    }
+
+                </Row>
+
             </Tab.Container>
             )
+    }
+
+    deleteGroup(group){
+        deleteGroup(group.id).then(
+            this.updateUserState()
+        );
     }
 
     getAuthorCourses(){
@@ -304,30 +440,53 @@ class Teacher extends Component{
                 <Tab.Pane
                 eventKey={"#group="+data.id}
                 >
+                    <Accordion>
+                        <Card>
+                            <Card.Header>
+                            <Accordion.Toggle as={ButtonBoot} variant="link" eventKey="1">
+                                    Опис курсу
+                                </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="1">
+                                <Card.Body>
+                                    {data.description}
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                    </Accordion>
                     <Row>
-                        <Col>Название</Col>
+                    <Accordion>
+                            <Card className="author-lessons">
+                            <Card.Header >
+                                <Accordion.Toggle as={ButtonBoot} variant="link" eventKey={data.id}>
+                                Список уроків
+                                </Accordion.Toggle>
+                            </Card.Header>
+                        <Accordion.Collapse eventKey={data.id}>
+                            <Card.Body>
+                            <Row>
+                            {this.lessonList(data)}
+                            </Row>
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                    </Accordion>
                     </Row>
                     <Row>
-                        <Col>{data.title}</Col>
+                        <ButtonBoot variant="outline-primary" onClick={()=>this.addLesson(data)}>СТВОРИТИ НОВИЙ УРОК</ButtonBoot>
                     </Row>
                     <Row>
-                        <Col>Описание</Col>
-                    </Row>
-                    <Row>
-                        <Col>{data.description}</Col>
-                    </Row>
-                    <Row>
-                        <Col>Уроки</Col>
-                    </Row>
-                    <Row>
-                      {this.lessonList(data)}
-                    </Row>
-                    {/* <Row>
-                      {this.UserList(data)}
-                    </Row>
-                    <Row>
-                        <ButtonBoot onClick={()=>this.openModal(data)}></ButtonBoot>
-                    </Row> */}
+                                { this.state.addLesson ? 
+                                <AddLesson updateUserState = {this.updateUserState}
+                                closeModal={this.endAddLesson} 
+                                isOpen={this.state.addLesson} 
+                                course={this.state.addToCourse}
+                                /> 
+                                : 
+                                null 
+                                }
+
+                            </Row>
                 </Tab.Pane>
         )
     }
@@ -340,6 +499,18 @@ class Teacher extends Component{
                         <ListGroup>
                             <strong>Название Курса</strong>
                             {list2}
+                            <ButtonBoot variant="outline-primary" onClick={()=>this.addCourse()}>СТВОРИТИ КУРС</ButtonBoot>
+                            <Row>
+                                { this.state.addCourse ? 
+                                <AddCourse updateUserState = {this.updateUserState}
+                                closeModal={this.endAddCourse} 
+                                isOpen={this.state.addCourse} 
+                                /> 
+                                : 
+                                null 
+                                }
+
+                            </Row>
                         </ListGroup>
                     </Col>
                     <Col sm={7}>
@@ -354,7 +525,14 @@ class Teacher extends Component{
             )
     }
 
-
+    watchVideo(){
+        if (this.state.video === null)return;
+        // let file = this._arrayBufferToBase64(this.state.pdf);
+        const file = new Blob([this.state.video], {type: 'video/mp4'});
+        if(file===null) return;
+        const blobURL = URL.createObjectURL(file);
+        window.open(blobURL)
+    }
 
     watchPdf(){
         if (this.state.pdf === null)return;
@@ -395,7 +573,7 @@ class Teacher extends Component{
     }
     
     watchYouTubeVideo(data){
-        if(data.data===undefined){return(<div></div>)}
+        if(data.data===undefined||data.data===null){return(<div></div>)}
         else return(
             <Row>
                 <ReactPlayer url={data.data} />
@@ -417,8 +595,17 @@ class Teacher extends Component{
             case "video":{
                 if(data.youtubeLink!=null){
                     this.setState({youtubeLink:data.youtubeLink})
+                    }    
+                else if(data.path!=null){
+                    getVideo(data.id)
+                    .then( (response) =>{
+                        this.setState({
+                            video:response
+                        },()=>{this.watchVideo()})
+                    })
+                    }
                 }
-            }
+            
         }
         return
 
@@ -426,7 +613,14 @@ class Teacher extends Component{
 
     ifPdf(data){
         if(data.dataType==="PDF") return(
-            <ButtonBoot onClick={()=>this.watchLessonData(data)}>Переглянути</ButtonBoot>
+            <ButtonBoot variant="outline-primary" onClick={()=>this.watchLessonData(data)}>ПЕРЕГЛЯНУТИ ФАЙЛ</ButtonBoot>
+        )
+        else return(<div></div>)
+    }
+
+    ifVideo(data){
+        if(data.dataType==="video"&&data.path!=null) return(
+            <ButtonBoot variant="outline-primary" onClick={()=>this.watchLessonData(data)}>ПЕРЕГЛЯНУТИ ВІДЕО</ButtonBoot>
         )
         else return(<div></div>)
     }
@@ -448,9 +642,11 @@ class Teacher extends Component{
                         <Row>{data.description}</Row>
                         <Row>
                             <this.watchYouTubeVideo data={data.youtubeLink}/>
+                            {/* <this.watchVideoLocal id={data.id}/> */}
+                            <this.ifVideo dataType={data.dataType} id={data.id} path={data.path}/>
                             <this.ifPdf dataType={data.dataType} id={data.id}/>
                             <Row><div></div></Row>
-                            <ButtonBoot>Видалити</ButtonBoot>
+                            <ButtonBoot variant="outline-danger">ВИДАЛИТИ</ButtonBoot>
                         </Row>
                     </Card.Text>
                 </Card.Body>
@@ -488,7 +684,7 @@ class Teacher extends Component{
                             {this.lessonDataList(lesson)}
                             </Row>
                             <Row>
-                                <ButtonBoot onClick={()=>this.addCourseData(lesson)}>ДОДАТИ МАТЕРІАЛ</ButtonBoot>
+                                <ButtonBoot variant="outline-primary" onClick={()=>this.addCourseData(lesson)}>ДОДАТИ МАТЕРІАЛ</ButtonBoot>
                             </Row>
                             <Row>
                                 { this.state.addInfo ? 
